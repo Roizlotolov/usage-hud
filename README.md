@@ -17,15 +17,93 @@ for [OpenClaw](https://github.com/openclaw/openclaw) · [Hermes Agent](https://g
 
 ## Table of contents
 
+- [Quick start](#quick-start)
 - [The problem](#the-problem)
 - [What this is (and isn't)](#what-this-is-and-isnt)
 - [Architecture](#architecture)
 - [Verification methodology](#verification-methodology)
-- [Install](#install)
+- [Full install & configuration](#full-install--configuration)
 - [What it actually looks like](#what-it-actually-looks-like)
 - [Development](#development)
 - [Contributing](#contributing)
 - [License](#license)
+
+## Quick start
+
+Pick your host below and copy-paste the whole block into a terminal.
+
+<details open>
+<summary><b>OpenClaw</b></summary>
+
+```bash
+git clone https://github.com/Roizlotolov/usage-hud.git
+cd usage-hud && npm install && npm run build
+
+openclaw plugins install ./packages/openclaw-plugin --link
+openclaw plugins enable usage-hud
+openclaw gateway restart
+```
+
+Then add this to your OpenClaw config (required — a non-bundled plugin needs
+explicit opt-in to receive the hook this reads):
+
+```jsonc
+{
+  "plugins": {
+    "entries": {
+      "usage-hud": {
+        "enabled": true,
+        "hooks": { "allowConversationAccess": true }
+      }
+    }
+  }
+}
+```
+
+Full config options (footer fields, alert thresholds, the `/quota` command): [`packages/openclaw-plugin/README.md`](packages/openclaw-plugin/README.md).
+
+</details>
+
+<details>
+<summary><b>Hermes Agent</b></summary>
+
+```bash
+git clone https://github.com/Roizlotolov/usage-hud.git
+cp -r usage-hud/packages/hermes-plugin/usage-hud ~/.hermes/plugins/usage-hud
+hermes plugins enable usage-hud
+```
+
+No build step — it's plain Python. Config is via environment variables (e.g.
+`USAGE_HUD_ALERT_CONTEXT_THRESHOLD_PCT`) — see [`examples/hermes-env.sh`](examples/hermes-env.sh)
+and [`packages/hermes-plugin/README.md`](packages/hermes-plugin/README.md) for the full list.
+
+</details>
+
+<details>
+<summary><b>Claude Code</b></summary>
+
+```bash
+git clone https://github.com/Roizlotolov/usage-hud.git
+cd usage-hud && npm install && npm run build
+pwd   # copy this path — you need it below
+```
+
+Add to `~/.claude/settings.json` (replace `/absolute/path/to/usage-hud` with the `pwd` output above):
+
+```json
+{
+  "statusLine": {
+    "type": "command",
+    "command": "node /absolute/path/to/usage-hud/packages/claude-code/scripts/statusline.mjs"
+  }
+}
+```
+
+For the on-demand skill, copy `packages/claude-code/skills/usage/` into
+`~/.claude/skills/` and edit the path inside its `SKILL.md` to match where you
+cloned this repo. Full details, including Telegram alert setup: [`packages/claude-code/README.md`](packages/claude-code/README.md).
+
+</details>
 
 ## The problem
 
@@ -111,7 +189,12 @@ real, load-bearing corrections along the way:
 
 Each package's README documents its own findings in full, with the exact source files read.
 
-## Install
+## Full install & configuration
+
+The [Quick start](#quick-start) above covers getting it running. For every
+config option (which footer fields to show, alert thresholds, cooldown, the
+on-demand command name) and the host-specific caveats each adapter had to work
+around, see the package for your host:
 
 - **OpenClaw** → [`packages/openclaw-plugin/README.md`](packages/openclaw-plugin/README.md)
 - **Hermes Agent** → [`packages/hermes-plugin/README.md`](packages/hermes-plugin/README.md)
