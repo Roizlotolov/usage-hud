@@ -4,7 +4,7 @@
   "description": "Claude Code adapter: statusline HUD + threshold alerts + on-demand usage skill",
   "type": "module",
   "scripts": {
-    "test": "node --test test/"
+    "test": "node --test test/*.test.mjs"
   },
   "dependencies": {
     "@usage-hud/core": "^0.1.0"
