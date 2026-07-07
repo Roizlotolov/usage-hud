@@ -12,6 +12,15 @@ openclaw gateway restart
 openclaw plugins inspect usage-hud --runtime --json           # confirm hooks/commands registered
 ```
 
+## Troubleshooting: no footer showing up
+
+Check these in order:
+
+1. **`hooks.allowConversationAccess: true` is missing from your config.** This is the #1 cause. A non-bundled plugin does not receive `reply_payload_sending` at all without it — silently, no error. See [Config](#config) below for the exact block.
+2. **`dist/index.js` doesn't exist.** If you ran `openclaw plugins install` before `npm run build`, the plugin has no entry point to load. Rebuild (`npm run build` at the repo root) and restart the gateway.
+3. **Confirm the hook is actually registered:** `openclaw plugins inspect usage-hud --runtime --json` should list `reply_payload_sending` under the plugin's hooks and `/quota` under its commands. If it shows zero hooks, the plugin failed to load — check gateway logs for a load error around plugin startup.
+4. **`event.usageState` may genuinely be absent for a given reply** (documented as happening on durable/replay delivery paths — see the source comment in `PluginHookReplyPayloadSendingEvent`). If steps 1-3 all check out, this is the remaining possibility; it's host behavior, not a plugin bug.
+
 ## What it does
 
 | Surface | Mechanism | Notes |
