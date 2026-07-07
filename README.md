@@ -116,6 +116,8 @@ Three surfaces, each independently toggleable:
 | **On-demand** | A command/skill that reports current usage on request |
 | **Alerts** | A proactive warning when context or budget crosses a threshold |
 
+**Does it cost tokens to run?** No — none of the three surfaces call the model. Footer, on-demand commands, and alerts all run *after* the LLM has already replied, either reading data the host already computed or making plain function calls / HTTP requests that never touch the model. Claude Code's on-demand surface is the one exception worth naming: it's implemented as a real skill, so when the model decides to invoke it, its instructions load into context like any tool call — but only when you actually ask, and it costs nothing while idle.
+
 ## Architecture
 
 There is no single importable library, because the three hosts are three

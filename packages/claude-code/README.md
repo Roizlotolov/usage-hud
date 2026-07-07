@@ -61,6 +61,12 @@ Channels.
 | On-demand | `skills/usage/SKILL.md` + `scripts/read_usage.mjs` | Reads the same per-session state file the statusline script writes on every turn — there's no other programmatic way to get this data (confirmed: `/cost`/`/context` are human-formatted terminal commands with no JSON API). |
 | Alerts | Side effect inside `scripts/statusline.mjs`, via the Telegram Bot API | See above. Cooldown state persists to `~/.claude/usage-hud/state/<session_id>.json` via `AlertEngine.getState()`/`loadState()` (added to `@usage-hud/core` specifically for this — a statusline script is a fresh process every invocation, so in-memory cooldown state alone would never actually cool down). |
 
+## Does this cost tokens?
+
+The HUD and alerts: no — `statusLine` is explicitly documented as running locally without consuming API tokens ("The status line runs locally and does not consume API tokens"), and the alert side effect is a plain HTTP POST to the Telegram Bot API, not a model call.
+
+The on-demand skill is the one real exception, and it's specific to Claude Code — OpenClaw's `/quota` and Hermes's `/cost` are plain commands that bypass the LLM entirely, but Claude Code skills are model-facing: when the model decides to invoke `skills/usage/SKILL.md` (because you asked about usage), its instructions load into context like any tool call. That only happens when you actually trigger it, and it's the same overhead as invoking any other skill — nothing this package adds beyond that.
+
 ## Mapping notes (verified against the official "Full JSON schema")
 
 - `context.usedPct` is Claude Code's own pre-calculated `context_window.used_percentage` — passed straight through rather than re-derived, per that field's docs: "Pre-calculated percentage of context window used."
