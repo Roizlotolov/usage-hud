@@ -15,6 +15,8 @@ for [OpenClaw](https://github.com/openclaw/openclaw) · [Hermes Agent](https://g
 
 <img src="packages/hermes-plugin/docs/footer-example.png" alt="The usage-hud footer appended to a reply in Telegram — model, token counts, context %, and cost" width="640">
 
+<img src="packages/claude-code/docs/claudecode-example.png" alt="The usage-hud statusline in Claude Code — model, token counts, context %, and cost" width="640">
+
 </div>
 
 ## Install

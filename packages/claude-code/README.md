@@ -4,6 +4,8 @@ Surfaces Claude Code's own usage/context/cost data as a terminal HUD, optional
 Telegram alerts, and an on-demand skill. Reuses Claude Code's own accounting —
 it never re-meters tokens.
 
+![The usage-hud statusline in Claude Code — model, token counts, context %, and cost](docs/claudecode-example.png)
+
 ## Why alerts live in the statusline script, not a hook
 
 The original plan (see `DESIGN.md` §6.3, before this package was built) assumed
