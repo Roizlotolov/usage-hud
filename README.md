@@ -60,6 +60,7 @@ All config options (footer fields, alert thresholds, the `/quota` command): [`pa
 ```bash
 cp -r packages/hermes-plugin/usage-hud ~/.hermes/plugins/usage-hud
 hermes plugins enable usage-hud
+hermes gateway restart   # only needed if the gateway is already running
 ```
 
 No build step, no npm — it's a plain Python plugin. Config is env vars, e.g. `USAGE_HUD_ALERT_CONTEXT_THRESHOLD_PCT` — see [`examples/hermes-env.sh`](examples/hermes-env.sh) and [`packages/hermes-plugin/README.md`](packages/hermes-plugin/README.md).

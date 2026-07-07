@@ -15,7 +15,16 @@ the real source (`agent/conversation_loop.py`, `agent/turn_finalizer.py`,
 ```bash
 cp -r usage-hud ~/.hermes/plugins/usage-hud
 hermes plugins enable usage-hud
+hermes gateway restart
 ```
+
+The restart is required if the gateway is already running: `discover_plugins()`
+is idempotent by default and only rescans manifests when explicitly forced
+*within the current process* (`hermes_cli/plugins.py`) — `hermes plugins
+enable` is a separate, short-lived CLI invocation that writes to config, it
+does not reach into an already-running gateway process to force a reload. If
+you haven't started the gateway yet, `hermes gateway start` picks up the
+newly enabled plugin on its own first launch and no restart is needed.
 
 ## What it does
 
