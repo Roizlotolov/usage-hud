@@ -8,7 +8,7 @@ import asyncio
 import os
 import threading
 
-import core as _core  # core.py lives next to this file (see plugin.yaml)
+from . import core as _core  # core.py lives next to this file (see plugin.yaml)
 
 _LOCK = threading.Lock()
 _CONFIG: dict = _core.DEFAULT_CONFIG

@@ -2,8 +2,8 @@
 core-ts, so the TypeScript and Python implementations can't silently drift.
 See SPEC.md sec 5 (Conformance).
 """
+import importlib.util
 import json
-import sys
 import unittest
 from pathlib import Path
 
@@ -11,8 +11,14 @@ REPO_ROOT = Path(__file__).resolve().parents[3]
 FIXTURES_DIR = REPO_ROOT / "spec" / "fixtures"
 PLUGIN_DIR = Path(__file__).resolve().parents[1] / "usage-hud"
 
-sys.path.insert(0, str(PLUGIN_DIR))
-import core  # noqa: E402  (path must be set up first; core.py has no hyphen so this import is fine)
+# Load core.py directly by file path instead of sys.path.insert(). A global
+# sys.path mutation here previously leaked into other test modules when run
+# together via `unittest discover` (both files execute in the same process),
+# which silently masked a real bug in __init__.py's own import of core.py -
+# see the comment in test_mapping.py for the full story.
+_spec = importlib.util.spec_from_file_location("usage_hud_core", PLUGIN_DIR / "core.py")
+core = importlib.util.module_from_spec(_spec)
+_spec.loader.exec_module(core)
 
 
 def _read_json(name: str):

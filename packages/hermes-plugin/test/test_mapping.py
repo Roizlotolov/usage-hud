@@ -5,20 +5,40 @@ in this test environment, so _build_snapshot's cost/context lookups take
 their except-branches and degrade gracefully - which is itself the behavior
 under test (a missing Hermes install must not crash the plugin).
 """
+import importlib.util
 import sys
+import types
 import unittest
 from pathlib import Path
 
 PLUGIN_DIR = Path(__file__).resolve().parents[1] / "usage-hud"
-sys.path.insert(0, str(PLUGIN_DIR))
 
-# The plugin package directory is named "usage-hud" (hyphenated, matching how
-# Hermes installs it - see plugin.yaml) so it can't be imported as a normal
-# package. Load __init__.py directly by file path instead.
-import importlib.util
+# Load __init__.py the SAME way Hermes's real plugin loader does
+# (hermes_cli/plugins.py: PluginManager._load_init_module), not via a
+# sys.path shortcut. A prior version of this test used
+# `sys.path.insert(0, str(PLUGIN_DIR))` + a bare `spec_from_file_location`
+# with no submodule_search_locations/__package__/__path__ - that let
+# __init__.py's own `import core` (a bare, non-relative import) resolve via
+# sys.path in the TEST, while under Hermes's actual loader the plugin
+# directory is never added to sys.path (only registered as the package's
+# __path__ for relative imports), so `import core` raised ModuleNotFoundError
+# and the whole plugin silently failed to load. Fixed to `from . import core`
+# in __init__.py; this harness now reproduces the real loader exactly so that
+# class of bug fails a test instead of only failing in production.
+_NS_PARENT = "_usage_hud_test_ns"
+if _NS_PARENT not in sys.modules:
+    _ns_pkg = types.ModuleType(_NS_PARENT)
+    _ns_pkg.__path__ = []
+    sys.modules[_NS_PARENT] = _ns_pkg
 
-_spec = importlib.util.spec_from_file_location("usage_hud_plugin", PLUGIN_DIR / "__init__.py")
+_module_name = f"{_NS_PARENT}.usage_hud"
+_spec = importlib.util.spec_from_file_location(
+    _module_name, PLUGIN_DIR / "__init__.py", submodule_search_locations=[str(PLUGIN_DIR)]
+)
 plugin = importlib.util.module_from_spec(_spec)
+plugin.__package__ = _module_name
+plugin.__path__ = [str(PLUGIN_DIR)]
+sys.modules[_module_name] = plugin
 _spec.loader.exec_module(plugin)
 
 
