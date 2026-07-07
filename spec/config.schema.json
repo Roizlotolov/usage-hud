@@ -1,0 +1,53 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://github.com/roizlotolov/usage-hud/spec/config.schema.json",
+  "title": "usage-hud config",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "footer": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "enabled": { "type": "boolean", "default": true },
+        "template": { "type": ["string", "null"], "default": null },
+        "fields": {
+          "type": "array",
+          "items": { "enum": ["model", "tokens", "context", "cost", "quota"] },
+          "default": ["model", "tokens", "context", "cost"]
+        }
+      }
+    },
+    "command": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "enabled": { "type": "boolean", "default": true },
+        "name": { "type": "string", "default": "usage" }
+      }
+    },
+    "alerts": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "context": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "enabled": { "type": "boolean", "default": true },
+            "thresholdPct": { "type": "number", "minimum": 0, "maximum": 100, "default": 80 }
+          }
+        },
+        "budget": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "enabled": { "type": "boolean", "default": true },
+            "thresholdPct": { "type": "number", "minimum": 0, "maximum": 100, "default": 20 }
+          }
+        },
+        "cooldownSec": { "type": "number", "minimum": 0, "default": 900 }
+      }
+    }
+  }
+}

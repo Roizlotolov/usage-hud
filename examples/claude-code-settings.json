@@ -1,0 +1,6 @@
+{
+  "statusLine": {
+    "type": "command",
+    "command": "USAGE_HUD_FOOTER_FIELDS=model,tokens,context,cost,quota node /absolute/path/to/usage-hud/packages/claude-code/scripts/statusline.mjs"
+  }
+}

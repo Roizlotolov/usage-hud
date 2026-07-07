@@ -1,0 +1,12 @@
+{
+  "description": "Config restricts fields to just model+context - tokens/cost/quota must not render even though present in snapshot",
+  "snapshot": {
+    "model": "claude-opus-4-8",
+    "tokens": { "input": 1200, "output": 340 },
+    "context": { "usedTokens": 41000, "limitTokens": 100000 },
+    "cost": { "turnUsd": 0.0187 }
+  },
+  "config": {
+    "footer": { "enabled": true, "fields": ["model", "context"] }
+  }
+}

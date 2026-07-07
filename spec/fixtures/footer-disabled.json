@@ -1,0 +1,10 @@
+{
+  "description": "footer.enabled=false must produce no footer at all (empty string, not omitted-fields text)",
+  "snapshot": {
+    "model": "claude-opus-4-8",
+    "tokens": { "input": 1200, "output": 340 }
+  },
+  "config": {
+    "footer": { "enabled": false }
+  }
+}

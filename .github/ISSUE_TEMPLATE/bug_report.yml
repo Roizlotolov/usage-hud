@@ -1,0 +1,42 @@
+name: Bug report
+description: Something in usage-hud isn't working as documented
+labels: ["bug"]
+body:
+  - type: dropdown
+    id: package
+    attributes:
+      label: Which package?
+      options:
+        - openclaw-plugin
+        - hermes-plugin
+        - claude-code
+        - core-ts
+        - Not sure / other
+    validations:
+      required: true
+  - type: input
+    id: host-version
+    attributes:
+      label: Host version
+      description: "e.g. `openclaw --version`, `hermes --version`, or Claude Code version"
+    validations:
+      required: true
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: What you expected vs. what actually happened
+    validations:
+      required: true
+  - type: textarea
+    id: repro
+    attributes:
+      label: Steps to reproduce
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: Relevant logs or config
+      description: Plugin config (redact tokens/secrets), host logs, or `plugins inspect --runtime --json` output
+      render: shell

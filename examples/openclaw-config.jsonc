@@ -1,0 +1,22 @@
+// Add under your OpenClaw config's top-level "plugins" key.
+// allowConversationAccess is required for a non-bundled plugin to receive
+// reply_payload_sending — see packages/openclaw-plugin/README.md.
+{
+  "plugins": {
+    "entries": {
+      "usage-hud": {
+        "enabled": true,
+        "hooks": { "allowConversationAccess": true },
+        "config": {
+          "footer": { "enabled": true, "fields": ["model", "tokens", "context", "cost"] },
+          "command": { "enabled": true, "name": "quota" },
+          "alerts": {
+            "context": { "enabled": true, "thresholdPct": 80 },
+            "budget": { "enabled": true, "thresholdPct": 20 },
+            "cooldownSec": 900
+          }
+        }
+      }
+    }
+  }
+}

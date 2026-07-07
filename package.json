@@ -1,0 +1,16 @@
+{
+  "name": "usage-hud",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Real-time context-size and remaining-usage HUD for chat-based AI agents (Claude Code, OpenClaw, Hermes)",
+  "workspaces": [
+    "packages/core-ts",
+    "packages/openclaw-plugin",
+    "packages/claude-code"
+  ],
+  "scripts": {
+    "build": "npm run build --workspaces --if-present",
+    "test": "npm run test --workspaces --if-present"
+  },
+  "license": "MIT"
+}

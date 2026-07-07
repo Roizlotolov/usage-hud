@@ -1,0 +1,20 @@
+{
+  "description": "Same session crosses the context threshold three times. Step 0 fires. Step 1 is 100s later (< 900s cooldown) and must be suppressed. Step 2 is 1000s after step 0 (> 900s cooldown) and must fire again. Feed steps through evaluate() in order against one shared, initially-empty cooldown state, passing nowMs explicitly for determinism.",
+  "config": {
+    "alerts": { "context": { "enabled": true, "thresholdPct": 80 }, "cooldownSec": 900 }
+  },
+  "sequence": [
+    {
+      "nowMs": 0,
+      "snapshot": { "model": "claude-opus-4-8", "context": { "usedTokens": 85000, "limitTokens": 100000 }, "route": { "sessionKey": "s1" } }
+    },
+    {
+      "nowMs": 100000,
+      "snapshot": { "model": "claude-opus-4-8", "context": { "usedTokens": 86000, "limitTokens": 100000 }, "route": { "sessionKey": "s1" } }
+    },
+    {
+      "nowMs": 1000000,
+      "snapshot": { "model": "claude-opus-4-8", "context": { "usedTokens": 87000, "limitTokens": 100000 }, "route": { "sessionKey": "s1" } }
+    }
+  ]
+}

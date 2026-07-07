@@ -1,0 +1,11 @@
+{
+  "description": "Threshold crossed but alerts.context.enabled=false -> must not fire",
+  "snapshot": {
+    "model": "claude-opus-4-8",
+    "context": { "usedTokens": 95000, "limitTokens": 100000 },
+    "route": { "sessionKey": "s1" }
+  },
+  "config": {
+    "alerts": { "context": { "enabled": false, "thresholdPct": 80 } }
+  }
+}

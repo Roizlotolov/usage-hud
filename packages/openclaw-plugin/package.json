@@ -1,0 +1,30 @@
+{
+  "name": "@usage-hud/openclaw-plugin",
+  "version": "0.1.0",
+  "description": "OpenClaw plugin: surfaces existing usage/context/cost into chat as a footer, /quota command, and same-reply alerts",
+  "type": "module",
+  "main": "dist/index.js",
+  "openclaw": {
+    "extensions": ["./dist/index.js"],
+    "compat": {
+      "pluginApi": ">=2026.6.0",
+      "minGatewayVersion": "2026.6.0"
+    }
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "test": "tsc -p tsconfig.test.json && node --test dist-test/test/"
+  },
+  "dependencies": {
+    "@usage-hud/core": "^0.1.0"
+  },
+  "peerDependencies": {
+    "openclaw": ">=2026.6.0"
+  },
+  "devDependencies": {
+    "openclaw": "^2026.6.11",
+    "typescript": "^5.6.3",
+    "@types/node": "^20.14.0"
+  },
+  "license": "MIT"
+}

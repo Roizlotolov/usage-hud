@@ -1,0 +1,67 @@
+{
+  "id": "usage-hud",
+  "name": "Usage HUD",
+  "description": "Surfaces existing usage/context/cost into chat: a footer, a /quota command, and same-reply threshold alerts.",
+  "contracts": {
+    "tools": []
+  },
+  "activation": {
+    "onStartup": true
+  },
+  "commandAliases": [
+    { "name": "quota", "kind": "runtime-slash" }
+  ],
+  "configSchema": {
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+      "footer": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "enabled": { "type": "boolean" },
+          "fields": {
+            "type": "array",
+            "items": { "enum": ["model", "tokens", "context", "cost", "quota"] }
+          }
+        }
+      },
+      "command": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "enabled": { "type": "boolean" },
+          "name": { "type": "string" }
+        }
+      },
+      "alerts": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "context": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "enabled": { "type": "boolean" },
+              "thresholdPct": { "type": "number", "minimum": 0, "maximum": 100 }
+            }
+          },
+          "budget": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "enabled": { "type": "boolean" },
+              "thresholdPct": { "type": "number", "minimum": 0, "maximum": 100 }
+            }
+          },
+          "cooldownSec": { "type": "number", "minimum": 0 }
+        }
+      }
+    }
+  },
+  "uiHints": {
+    "footer": { "label": "Footer", "help": "Appends a usage line to every reply" },
+    "command": { "label": "On-demand command", "help": "Registers /quota (usage/status/context are reserved by core)" },
+    "alerts": { "label": "Threshold alerts", "help": "Prepends a warning to the next reply once a threshold is crossed" }
+  }
+}

@@ -1,0 +1,5 @@
+Model: claude-opus-4-8
+Tokens: in 1200 / out 340 (cache 500)
+Context: 41% (41000 / 100000)
+Cost: $0.0187 this turn ($1.42 session)
+Quota: Claude weekly 62% left

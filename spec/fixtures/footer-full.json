@@ -1,0 +1,14 @@
+{
+  "description": "All fields present, default config",
+  "snapshot": {
+    "model": "anthropic/claude-opus-4-8",
+    "provider": "anthropic",
+    "tokens": { "input": 1200, "output": 340, "cacheRead": 500 },
+    "context": { "usedTokens": 41000, "limitTokens": 100000 },
+    "cost": { "turnUsd": 0.0187, "sessionUsd": 1.42 },
+    "quota": { "windows": [{ "label": "Claude weekly", "usedPct": 38 }] }
+  },
+  "config": {
+    "footer": { "enabled": true, "fields": ["model", "tokens", "context", "cost", "quota"] }
+  }
+}

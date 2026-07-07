@@ -1,0 +1,11 @@
+{
+  "description": "context.usedPct (85) >= thresholdPct (80) -> context alert fires",
+  "snapshot": {
+    "model": "claude-opus-4-8",
+    "context": { "usedTokens": 85000, "limitTokens": 100000 },
+    "route": { "sessionKey": "s1" }
+  },
+  "config": {
+    "alerts": { "context": { "enabled": true, "thresholdPct": 80 } }
+  }
+}

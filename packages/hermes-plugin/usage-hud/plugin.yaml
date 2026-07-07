@@ -1,0 +1,7 @@
+name: usage-hud
+version: 1.0.0
+description: Surfaces Hermes' existing usage/context/cost into chat (footer, /cost, alerts)
+provides_hooks:
+  - post_api_request
+  - transform_llm_output
+  - pre_gateway_dispatch
