@@ -13,6 +13,11 @@ the real source (`agent/conversation_loop.py`, `agent/turn_finalizer.py`,
 ## Install
 
 ```bash
+# The `rm -rf` keeps re-installs idempotent: `cp -r usage-hud <dir>` copies the
+# source *into* <dir> when it already exists, nesting it one level too deep as
+# ~/.hermes/plugins/usage-hud/usage-hud/ (which Hermes never loads). See
+# Troubleshooting. It also clears any stale __pycache__ from an earlier copy.
+rm -rf ~/.hermes/plugins/usage-hud
 cp -r usage-hud ~/.hermes/plugins/usage-hud
 hermes plugins enable usage-hud
 hermes gateway restart
@@ -59,6 +64,69 @@ newly enabled plugin on its own first launch and no restart is needed.
 Set these via `hermes tools` or `~/.hermes/.env`, same as the Langfuse plugin's own env vars.
 
 See [`SPEC.md`](../../SPEC.md) for the full config semantics and format rules — `core.py` here is a straight Python port of `packages/core-ts`, graded against the same `spec/fixtures/*.json`.
+
+## Troubleshooting
+
+### No footer *and* `/cost` is an unknown command
+
+Both surfaces missing at once means the plugin **failed to load entirely**, so
+`register()` never ran and neither the `transform_llm_output` hook nor the
+`/cost` command was registered. Do not trust `hermes plugins list` here: its
+`enabled` column reflects the `plugins.enabled` allow-list in `config.yaml`
+(desired state), **not** whether the module imported. A failed load is logged
+as `WARNING hermes_cli.plugins: Failed to load plugin 'usage-hud': <reason>`,
+but the running gateway may not surface that logger at its default level — so
+verify the install on disk instead. It's almost always one of two copy mistakes:
+
+1. **The copy went one level too deep.** `cp -r usage-hud ~/.hermes/plugins/usage-hud`
+   copies the source *into* the target when the target already exists, producing
+   `~/.hermes/plugins/usage-hud/usage-hud/`. Discovery (`_scan_directory` in
+   `hermes_cli/plugins.py`) treats the directory that has its own `plugin.yaml`
+   as a *flat* plugin and never descends, so the nested copy is dead weight —
+   and any older copy still at the top level keeps loading instead.
+
+   ```bash
+   ls -la ~/.hermes/plugins/usage-hud/
+   # MUST show plugin.yaml, __init__.py, core.py DIRECTLY.
+   # A usage-hud/ subdirectory here means the copy doubled up.
+   ```
+
+2. **A stale `__init__.py` still does `import core`.** Hermes loads a directory
+   plugin as the package `hermes_plugins.<slug>` via
+   `spec_from_file_location(..., submodule_search_locations=[plugin_dir])` — the
+   plugin directory is on the *package's* search path but **not** on `sys.path`.
+   A bare `import core` therefore raises `ModuleNotFoundError: No module named
+   'core'` and takes the whole plugin down with it. The sibling import must be
+   relative:
+
+   ```bash
+   grep -n '^from \. import core' ~/.hermes/plugins/usage-hud/__init__.py
+   # Must match. `import core as _core` is the pre-fix version and will not load.
+   ```
+
+**Fix** — reinstall cleanly (clears a nested dir, a stale top-level copy, and
+old bytecode in one shot), then restart the gateway:
+
+```bash
+rm -rf ~/.hermes/plugins/usage-hud
+cp -r usage-hud ~/.hermes/plugins/usage-hud
+hermes gateway restart          # systemd --user setups: systemctl --user restart hermes-gateway
+```
+
+### `/cost` returns real data, but there's still no footer
+
+The plugin loaded — the footer is being suppressed at render time:
+
+- **Footer switched off.** `USAGE_HUD_FOOTER_ENABLED=false` (or an empty
+  `USAGE_HUD_FOOTER_FIELDS`) disables it. Restore it to `true` / a non-empty list.
+- **Another plugin won the hook.** Only the *first* non-empty string any plugin
+  returns from `transform_llm_output` is used — Hermes does not chain transforms
+  (see [What it does](#what-it-does)). If a second enabled plugin also registers
+  `transform_llm_output` and returns non-empty first, this plugin's footer is
+  silently dropped. Ensure at most one enabled plugin owns that hook.
+- **Cold context cache (not a bug).** `context%` alone is omitted on the very
+  first turn for a brand-new model until Hermes' on-disk context-length cache
+  warms; the rest of the footer still renders. See *Verified hook semantics*.
 
 ## Development
 
