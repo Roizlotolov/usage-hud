@@ -13,6 +13,8 @@ Real-time context-window size and remaining usage, surfaced into Telegram/Discor
 
 for [OpenClaw](https://github.com/openclaw/openclaw) · [Hermes Agent](https://github.com/NousResearch/hermes-agent) · [Claude Code](https://code.claude.com)
 
+<img src="packages/hermes-plugin/docs/footer-example.png" alt="The usage-hud footer appended to a reply in Telegram — model, token counts, context %, and cost" width="640">
+
 </div>
 
 ## Install
