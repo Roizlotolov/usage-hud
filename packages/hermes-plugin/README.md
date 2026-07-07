@@ -62,6 +62,27 @@ newly enabled plugin on its own first launch and no restart is needed.
 | `USAGE_HUD_ALERT_COOLDOWN_SEC` | `900` |
 
 Set these via `hermes tools` or `~/.hermes/.env`, same as the Langfuse plugin's own env vars.
+**Changes to `~/.hermes/.env` require a gateway restart** (`hermes gateway
+restart`, or `systemctl --user restart hermes-gateway` on systemd --user
+setups) — the gateway reads `.env` once at startup, before it loads plugins.
+
+### Footer fields
+
+`USAGE_HUD_FOOTER_FIELDS` is a comma-separated subset of the fields below,
+rendered left-to-right in the order you list them:
+
+| Field | Renders | Example |
+|---|---|---|
+| `model` | model name, `provider/` prefix stripped | `gpt-5.5` |
+| `tokens` | this turn's input/output tokens (plus cache reads when present) | `in 328/out 5 (cache 18432)` |
+| `context` | context-window occupancy | `ctx 7%` |
+| `cost` | estimated USD cost of the turn | `$0.0000` |
+
+For example `USAGE_HUD_FOOTER_FIELDS=model,context` renders `— gpt-5.5 · ctx 7%`.
+On a flat-rate / subscription backend `cost` is always `$0.0000`, so dropping it
+is common. (`quota` is also accepted, but Hermes exposes no quota data to
+plugins — `_build_snapshot` in `__init__.py` never populates it — so it renders
+nothing and is omitted from the default field list.)
 
 See [`SPEC.md`](../../SPEC.md) for the full config semantics and format rules — `core.py` here is a straight Python port of `packages/core-ts`, graded against the same `spec/fixtures/*.json`.
 
