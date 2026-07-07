@@ -3,6 +3,8 @@
 Surfaces Hermes' own usage/context/cost data into chat. Reuses `agent.usage_pricing`
 for cost and Hermes' own on-disk context-length cache — it never re-meters tokens.
 
+![The usage-hud footer appended to a Hermes reply in Telegram — model, token counts, context %, and cost](docs/footer-example.png)
+
 Everything below was verified by cloning `NousResearch/hermes-agent` and reading
 the real source (`agent/conversation_loop.py`, `agent/turn_finalizer.py`,
 `agent/usage_pricing.py`, `agent/model_metadata.py`, `gateway/session.py`,
