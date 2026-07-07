@@ -15,37 +15,30 @@ for [OpenClaw](https://github.com/openclaw/openclaw) · [Hermes Agent](https://g
 
 </div>
 
-## Table of contents
-
-- [Quick start](#quick-start)
-- [The problem](#the-problem)
-- [What this is (and isn't)](#what-this-is-and-isnt)
-- [Architecture](#architecture)
-- [Verification methodology](#verification-methodology)
-- [Full install & configuration](#full-install--configuration)
-- [What it actually looks like](#what-it-actually-looks-like)
-- [Development](#development)
-- [Contributing](#contributing)
-- [License](#license)
-
-## Quick start
-
-Pick your host below and copy-paste the whole block into a terminal.
-
-<details open>
-<summary><b>OpenClaw</b></summary>
+## Install
 
 ```bash
 git clone https://github.com/Roizlotolov/usage-hud.git
-cd usage-hud && npm install && npm run build
+cd usage-hud
+```
+
+That's the whole prerequisite — each host below tells you exactly what else it needs (some need a build, Hermes doesn't need anything more).
+
+## Quick start
+
+Pick your host.
+
+### OpenClaw
+
+```bash
+npm install && npm run build
 
 openclaw plugins install ./packages/openclaw-plugin --link
 openclaw plugins enable usage-hud
 openclaw gateway restart
 ```
 
-Then add this to your OpenClaw config (required — a non-bundled plugin needs
-explicit opt-in to receive the hook this reads):
+Then add this to your OpenClaw config — required, a non-bundled plugin needs explicit opt-in to receive the hook this reads:
 
 ```jsonc
 {
@@ -60,35 +53,25 @@ explicit opt-in to receive the hook this reads):
 }
 ```
 
-Full config options (footer fields, alert thresholds, the `/quota` command): [`packages/openclaw-plugin/README.md`](packages/openclaw-plugin/README.md).
+All config options (footer fields, alert thresholds, the `/quota` command): [`packages/openclaw-plugin/README.md`](packages/openclaw-plugin/README.md).
 
-</details>
-
-<details>
-<summary><b>Hermes Agent</b></summary>
+### Hermes Agent
 
 ```bash
-git clone https://github.com/Roizlotolov/usage-hud.git
-cp -r usage-hud/packages/hermes-plugin/usage-hud ~/.hermes/plugins/usage-hud
+cp -r packages/hermes-plugin/usage-hud ~/.hermes/plugins/usage-hud
 hermes plugins enable usage-hud
 ```
 
-No build step — it's plain Python. Config is via environment variables (e.g.
-`USAGE_HUD_ALERT_CONTEXT_THRESHOLD_PCT`) — see [`examples/hermes-env.sh`](examples/hermes-env.sh)
-and [`packages/hermes-plugin/README.md`](packages/hermes-plugin/README.md) for the full list.
+No build step, no npm — it's a plain Python plugin. Config is env vars, e.g. `USAGE_HUD_ALERT_CONTEXT_THRESHOLD_PCT` — see [`examples/hermes-env.sh`](examples/hermes-env.sh) and [`packages/hermes-plugin/README.md`](packages/hermes-plugin/README.md).
 
-</details>
-
-<details>
-<summary><b>Claude Code</b></summary>
+### Claude Code
 
 ```bash
-git clone https://github.com/Roizlotolov/usage-hud.git
-cd usage-hud && npm install && npm run build
-pwd   # copy this path — you need it below
+npm install && npm run build
+pwd   # copy this — you need the absolute path below
 ```
 
-Add to `~/.claude/settings.json` (replace `/absolute/path/to/usage-hud` with the `pwd` output above):
+Add to `~/.claude/settings.json`, replacing `/absolute/path/to/usage-hud` with the `pwd` output above:
 
 ```json
 {
@@ -99,11 +82,7 @@ Add to `~/.claude/settings.json` (replace `/absolute/path/to/usage-hud` with the
 }
 ```
 
-For the on-demand skill, copy `packages/claude-code/skills/usage/` into
-`~/.claude/skills/` and edit the path inside its `SKILL.md` to match where you
-cloned this repo. Full details, including Telegram alert setup: [`packages/claude-code/README.md`](packages/claude-code/README.md).
-
-</details>
+For the on-demand skill, copy `packages/claude-code/skills/usage/` into `~/.claude/skills/` and edit the path inside its `SKILL.md`. Telegram alert setup and full details: [`packages/claude-code/README.md`](packages/claude-code/README.md).
 
 ## The problem
 
@@ -188,19 +167,6 @@ real, load-bearing corrections along the way:
 - **Claude Code**: re-fetched the current official docs during implementation and found hook input **does not carry `context_window`/`cost`/`token_usage` at all**, which the original plan assumed it did. The alert mechanism was rearchitected around the statusline script — the one place that verifiably has this data — instead of a hook that can't see it.
 
 Each package's README documents its own findings in full, with the exact source files read.
-
-## Full install & configuration
-
-The [Quick start](#quick-start) above covers getting it running. For every
-config option (which footer fields to show, alert thresholds, cooldown, the
-on-demand command name) and the host-specific caveats each adapter had to work
-around, see the package for your host:
-
-- **OpenClaw** → [`packages/openclaw-plugin/README.md`](packages/openclaw-plugin/README.md)
-- **Hermes Agent** → [`packages/hermes-plugin/README.md`](packages/hermes-plugin/README.md)
-- **Claude Code** → [`packages/claude-code/README.md`](packages/claude-code/README.md)
-
-Example configs for each are in [`examples/`](examples/).
 
 ## What it actually looks like
 
